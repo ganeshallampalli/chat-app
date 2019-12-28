@@ -1,0 +1,25 @@
+server:
+  servlet:
+    context-path: /chat-app
+  port: 9080
+tourism:
+  service:
+    name: CHAT-APP
+logging:
+  level:
+    com.chat: DEBUG
+    org.hibernate.SQL: DEBUG
+spring:
+  jpa:
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.PostgreSQLDialect
+        jdbc.lob.non_contextual_creation: true
+    database: postgresql
+  datasource:
+    url: jdbc:postgresql://localhost:5432/postgres
+    username: gallampalli
+    password: postgres
+#    url: jdbc:postgres://ec2-54-83-1-101.compute-1.amazonaws.com:5432/d4b57jg6msou3a
+#    username: bkwxsyvgvneiwr
+#    password: a571ae8e7313473f485711b7111709071e524137c9d99761b987f4ebdb957b6f
