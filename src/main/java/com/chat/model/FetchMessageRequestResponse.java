@@ -10,12 +10,6 @@ import java.util.List;
 
 public interface FetchMessageRequestResponse {
 
-    /*@Data
-    public class FetchMessageRequest extends BaseRequestResponse.BaseRequest {
-
-        private String chatId;
-    }*/
-
     @Data
     public class FetchMessageResponse {
 
