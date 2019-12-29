@@ -1,9 +1,12 @@
 package com.chat.datamodel.service.impl;
 
 import com.chat.datamodel.MessageHistory;
+import com.chat.datamodel.repository.ChatDocRepository;
 import com.chat.datamodel.repository.MessageHistoryRepository;
 import com.chat.datamodel.service.MessageHistoryDAOService;
 import com.chat.model.BaseRequestResponse.BaseResponse;
+import com.chat.model.FetchMessageRequestResponse.FetchMessageResponse;
+import com.chat.model.FetchMessageRequestResponse.Message;
 import com.chat.model.SaveMessageRequestResponse.SaveMessageRequest;
 import com.chat.model.SaveMessageRequestResponse.SaveMessageResponse;
 import lombok.extern.slf4j.Slf4j;
@@ -12,7 +15,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
 /**
  * @author ganeshallampalli
@@ -25,7 +30,10 @@ public class MessageHistoryDAOServiceImpl implements MessageHistoryDAOService {
     @Autowired
     MessageHistoryRepository messageHistoryRepository;
 
-    SimpleDateFormat sdf = new SimpleDateFormat("dd MMM yyyy HH mm ss");
+    @Autowired
+    ChatDocRepository chatDocRepository;
+
+    SimpleDateFormat sdf = new SimpleDateFormat("dd MMM yyyy HH:mm:ss");
 
     @Override
     public BaseResponse<SaveMessageResponse> saveMessage(SaveMessageRequest saveMessageRequest) {
@@ -80,5 +88,49 @@ public class MessageHistoryDAOServiceImpl implements MessageHistoryDAOService {
             baseResponse.setResponseData(null);
             return baseResponse;
         }
+    }
+
+    @Override
+    public BaseResponse<FetchMessageResponse> fetchMessages(String chatId) {
+        BaseResponse<FetchMessageResponse> baseResponse = new BaseResponse<>();
+
+        if (StringUtils.isBlank(chatId) || null == chatDocRepository.findByChatId(chatId)) {
+            baseResponse.setCode("1000008");
+            baseResponse.setMessage("Invalid chat session. Please try again.");
+            baseResponse.setResponseData(null);
+            return baseResponse;
+        }
+
+        List<MessageHistory> messageHistories = messageHistoryRepository.findAllByChatIdOrderBySentTimeAsc(chatId);
+
+        if (messageHistories.isEmpty()) {
+            baseResponse.setCode("1000009");
+            baseResponse.setMessage("There's no messages here. Please type your message.");
+            baseResponse.setResponseData(null);
+            return baseResponse;
+        }
+
+        FetchMessageResponse fetchMessageResponse = convertMessageHistoryToResponse(messageHistories, chatId);
+
+        baseResponse.setCode("000");
+        baseResponse.setMessage("Fetched Messages successfully.");
+        baseResponse.setResponseData(fetchMessageResponse);
+
+        return baseResponse;
+    }
+
+    private FetchMessageResponse convertMessageHistoryToResponse(List<MessageHistory> messageHistories, String chatId) {
+
+        FetchMessageResponse fetchMessageResponse = new FetchMessageResponse();
+        List<Message> messages = new ArrayList<>();
+        messageHistories.forEach(messageHistory -> {
+            Message message = new Message(messageHistory.getId(), messageHistory.getInitiatedFrom(), messageHistory.getInitiatedTo(), sdf.format(messageHistory.getSentTime()));
+            messages.add(message);
+        });
+
+        fetchMessageResponse.setChatId(chatId);
+        fetchMessageResponse.setMessages(messages);
+
+        return fetchMessageResponse;
     }
 }

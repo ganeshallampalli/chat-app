@@ -17,9 +17,9 @@ spring:
         jdbc.lob.non_contextual_creation: true
     database: postgresql
   datasource:
-#    url: jdbc:postgresql://localhost:5432/postgres
-#    username: gallampalli
-#    password: postgres
-    url: jdbc:postgres://ec2-107-21-235-87.compute-1.amazonaws.com:5432/dfkv32e2q2f7ju
-    username: hhrfmnuzuryxtr
-    password: 49d898113ddb5869838a7ac54c5166c90af8eb33de3f73754a8391ad82d64824
+    url: jdbc:postgresql://localhost:5432/postgres
+    username: gallampalli
+    password: postgres
+#    url: jdbc:postgres://ec2-107-21-235-87.compute-1.amazonaws.com:5432/dfkv32e2q2f7ju
+#    username: hhrfmnuzuryxtr
+#    password: 49d898113ddb5869838a7ac54c5166c90af8eb33de3f73754a8391ad82d64824
